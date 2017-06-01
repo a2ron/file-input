@@ -329,4 +329,11 @@ describe("file-input custom element tests", function() {
             document.body.appendChild(fileInputElParent);
         });
     });
+
+  describe("open tests", function() {
+    it("open method must return 'true' when success, no exceptions", function() {
+      var fileInputEl = loadFileInput();
+      expect(fileInputEl.open()).toEqual(true);
+    });
+  });
 });
