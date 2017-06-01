@@ -202,6 +202,7 @@ var fileInput = (function() {
       }
     },
 
+
     // This is the only way (I am aware of) to reset an `<input type="file">`
     // without removing it from the DOM.  Removing it disconnects it
     // from the CE.
@@ -257,7 +258,6 @@ var fileInput = (function() {
 
       updateValidity(customEl);
     },
-
 
 
     properties = {
@@ -370,43 +370,58 @@ var fileInput = (function() {
     declaredProps.syncProperty(this, properties, attr, newVal);
   };
 
-    fileInputPrototype.createdCallback = function() {
-      var fileInput, customEl = this;
-      insertIntoDocument(this, "file-input");
-      declaredProps.init(this, properties);
+  fileInputPrototype.createdCallback = function() {
+    var fileInput, customEl = this;
+    insertIntoDocument(this, "file-input");
+    declaredProps.init(this, properties);
 
-      this.setAccept(this.accept);
+    this.setAccept(this.accept);
 
-      fileInput = customEl.querySelector(".fileInput");
-      fileInput.addEventListener("change", this.changeHandler.bind(this));
+    fileInput = customEl.querySelector(".fileInput");
+    fileInput.addEventListener("change", this.changeHandler.bind(this));
 
-      customEl.files = [];
-      customEl.invalid = {count: 0};
+    customEl.files = [];
+    customEl.invalid = {count: 0};
 
-      if (customEl.camera && isIos()) {
-        customEl.maxFiles = 1;
+    if (customEl.camera && isIos()) {
+      customEl.maxFiles = 1;
 
-        var iosCameraAccept = "image/*;capture=camera";
-        if (customEl.accept && customEl.accept.length.trim().length > 0) {
-          customEl.accept += "," + iosCameraAccept;
-        }
-        else {
-          customEl.accept = iosCameraAccept;
-        }
+      var iosCameraAccept = "image/*;capture=camera";
+      if (customEl.accept && customEl.accept.length.trim().length > 0) {
+        customEl.accept += "," + iosCameraAccept;
       }
-
-      this.setMaxFiles(customEl.maxFiles);
-      this.setDirectory(customEl.directory);
-
-      if (customEl.required) {
-        setupValidationTarget(customEl);
+      else {
+        customEl.accept = iosCameraAccept;
       }
-    };
+    }
+
+    this.setMaxFiles(customEl.maxFiles);
+    this.setDirectory(customEl.directory);
+
+    if (customEl.required) {
+      setupValidationTarget(customEl);
+    }
+  };
 
   fileInputPrototype.reset = function() {
     var customEl = this;
 
     resetInput(customEl);
+  };
+
+
+  /**
+   * Method to open the file chooser.
+   * It just trigger the click event of the <input type="file"> which the component wraps
+   */
+  fileInputPrototype.open = function() {
+    var ok = true;
+    try {
+      this.querySelector(".fileInput").click();
+    } catch (e) {
+      ok = false;
+    }
+    return ok;
   };
 
   return fileInputPrototype;
